@@ -14,6 +14,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('users')->delete();
         if (Schema::hasColumn('users', 'name')) {
             $this->command->error('Run migrations before running seeder');
             return;
