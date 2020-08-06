@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Product;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -62,5 +63,21 @@ class ProductControllerTest extends TestCase
         $response = $this->json('GET', '/api/products/' . $product->id);
 
         $response->assertStatus(404);
+    }
+
+    public function testProductUpdated()
+    {
+        $product = factory('App\Product')->create();
+
+        $oldDescription = $product->description;
+        $updatedDescription = Str::random(144);
+        $response = $this->json('PUT', '/api/products/' . $product->id, [
+            'description' => $updatedDescription
+        ]);
+        $response->assertStatus(204);
+
+        $updatedProduct = Product::find($product->id);
+        $this->assertNotEquals($oldDescription, $updatedDescription);
+        $this->assertEquals($updatedDescription, $updatedProduct->description);
     }
 }
