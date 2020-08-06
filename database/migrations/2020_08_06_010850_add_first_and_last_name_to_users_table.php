@@ -39,8 +39,7 @@ class AddFirstAndLastNameToUsersTable extends Migration
          // TODO move data from users.first_name and users.last_name to users.name
 
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('first_name');
-            $table->dropColumn('last_name');
+            $table->dropColumn(['first_name', 'last_name']);
         });
     }
 }
