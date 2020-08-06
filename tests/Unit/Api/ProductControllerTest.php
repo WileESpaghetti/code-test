@@ -80,4 +80,16 @@ class ProductControllerTest extends TestCase
         $this->assertNotEquals($oldDescription, $updatedDescription);
         $this->assertEquals($updatedDescription, $updatedProduct->description);
     }
+
+    public function testProductDeleted()
+    {
+        $product = factory('App\Product')->create();
+
+        $deleteResponse = $this->json('DELETE', '/api/products/' . $product->id);
+        $deleteResponse->assertStatus(204);
+
+        $response = $this->json('GET', '/api/products/' . $product->id);
+        $response->assertStatus(404);
+
+    }
 }
