@@ -13,7 +13,7 @@ class CreateUserProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_products', function (Blueprint $table) {
+        Schema::create('product_user', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
@@ -28,6 +28,6 @@ class CreateUserProductsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_products');
+        Schema::dropIfExists('product_user');
     }
 }
