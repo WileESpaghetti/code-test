@@ -20,4 +20,20 @@ class ProductControllerTest extends TestCase
             ->assertStatus(200)
             ->assertJsonCount(25);
     }
+
+    public function testProductCreated()
+    {
+        $product = [
+            'name' => 'example',
+            'description' => 'my description',
+            'price' => 12.34,
+            'image' => 'test'
+        ];
+
+        $response = $this->json('POST', '/api/products', $product);
+        $response
+            ->assertStatus(201)
+            ->assertJsonFragment($product);
+
+    }
 }
