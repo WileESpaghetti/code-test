@@ -1,8 +1,9 @@
 <template>
     <div class="card">
-        <div class="card-header">{{name}}</div>
+        <img v-bind:src="image ? image : '/images/placeholder.png'" class="card-img-top" v-bind:alt="name">
 
         <div class="card-body text-center">
+            <div class="card-title">{{name}}</div>
             <p class="card-text">{{description}}</p>
             <p><strong>Price:</strong> {{priceFilter(price)}}</p>
 
