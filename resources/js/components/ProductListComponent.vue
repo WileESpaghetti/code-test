@@ -1,5 +1,8 @@
 <template>
     <div class="container">
+        <div v-if="isAlertVisible" class="alert alert-success" role="alert">
+            A simple success alert—check it out!
+        </div>
         <div class="row justify-content-center">
                 <div class="card">
                     <div class="card-header">Products</div>
@@ -15,7 +18,8 @@
                                         v-bind:name="product.name"
                                         v-bind:description="product.description"
                                         v-bind:price="product.price"
-                                        v-bind:image="product.image">
+                                        v-bind:image="product.image"
+                                        v-bind:id="product.id">
                                     </product>
                                 </div>
                             </div>
@@ -31,11 +35,16 @@
         data() {
             return {
                 isLoading: true,
+                isAlertVisible: false,
                 products: [],
             };
         },
         mounted() {
+            var self = this;
             console.log('Component mounted.')
+            this.$root.$on('addproduct', function(data) {
+                self.handleAddProduct(data);
+            });
         },
         created: function() {
             console.log('created');
@@ -53,6 +62,14 @@
                     .then(function (response) {
                         return response.json()
                     });
+            },
+            handleAddProduct(data) {
+                var self = this;
+                console.log('handle add product');
+                this.isAlertVisible = true;
+                setTimeout(function() {
+                    self.isAlertVisible = false;
+                }, 2000);
             }
         }
     }
