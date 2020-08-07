@@ -10,9 +10,7 @@
                             <span class="sr-only">Loading...</span>
                         </div>
                         <div v-if="!isLoading">
-                            <ul>
-                                <li v-for="product in products" :key="product.id">{{product.name}}</li>
-                            </ul>
+                            <product v-for="product in products" :key="product.id" v-bind:name="product.name"></product>
                         </div>
                     </div>
                 </div>
