@@ -17,6 +17,8 @@
                     {{ __('You are logged in!') }}
                 </div>
             </div>
+
+            <product-list></product-list>
         </div>
     </div>
 </div>
