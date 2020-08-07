@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Product;
 use Illuminate\Http\Request;
 
 class MyProductsController extends Controller
@@ -35,7 +36,25 @@ class MyProductsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = auth()->user();
+
+        $newProducts = [];
+
+        $getId = function ($p) {return $p->id;};
+        $existingProductIds = $user->products->map($getId);
+
+        foreach ($request->all() as $productData) {
+            if (empty($productData['id']) || $existingProductIds->contains($productData['id'])) {
+                continue;
+            }
+
+            $newProducts[] = Product::findOrFail($productData['id']);
+        }
+
+
+        $user->products()->saveMany($newProducts);
+
+        return response()->json($user->products);
     }
 
     /**
