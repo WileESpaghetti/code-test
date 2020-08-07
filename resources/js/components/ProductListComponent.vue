@@ -1,7 +1,6 @@
 <template>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">Products</div>
 
@@ -9,11 +8,19 @@
                         <div v-if="isLoading" class="spinner-border" role="status">
                             <span class="sr-only">Loading...</span>
                         </div>
-                        <div v-if="!isLoading">
-                            <product v-for="product in products" :key="product.id" v-bind:name="product.name"></product>
+                        <div v-if="!isLoading" class="container">
+                            <div class="row justify-content-center">
+                                <div v-for="product in products" :key="product.id" class="col-lg-4 col-md-6 col-sm-12 mb-3">
+                                    <product
+                                        v-bind:name="product.name"
+                                        v-bind:description="product.description"
+                                        v-bind:price="product.price"
+                                        v-bind:image="product.image">
+                                    </product>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>
