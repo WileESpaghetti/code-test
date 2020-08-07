@@ -106,3 +106,110 @@ When you are finished you will push up the application to a personal git repo. T
 James is available for any questions you may have via email at james.terrono@furthered.com.
 
 ![Good Luck](http://www.reactiongifs.us/wp-content/uploads/2014/01/good_luck_morgan_freeman.gif)
+
+## Evaluating
+
+### Setup
+* clone the git repo
+* run `compoesr install`
+    * if an error occurs about needing laravel/ui run `composer update`
+* create a `.env` with the appropriate database information
+    * I typically run MySQL through docker: `docker run --name code-test-db -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=laravel -p3306:3306  mysql:5.7`
+* run the following to complete laravel install
+```
+php artisan key:generate
+php artisan migrate
+php artisan db:seed
+
+# Fixes uploaded files not showing up
+php artisan storage:link
+
+npm install
+npm run dev
+```
+* the app is now able to be started using `php artisan serve`
+
+### Authentication
+The API is secured using the `auth.basic` middleware. API tokens are typically preferred, but using
+HTTP basic auth allowed for a quicker start with the rest of development. Basic auth doesn't require
+the extra User infomation and database setup.
+
+One disadvantage of using the `auth.basic` middleware is that you will get prompted by the browser
+for your login information again after you submit the login form.
+
+User roles and permissions are not implemented so the product creation form is accessible to any
+logged in user.
+
+
+### Making API Requests
+The main application uses most of the API routes for all resources, but you can use `curl` to test
+the endpoints manually.
+
+The products API is built using Laravel's Resource controllers and follows those conventions for
+CRUD operations.
+
+Additionally we have some custom routes to access user specific product information. (`/api/products/mine`).
+The full list of supported routes can be viewed by running `php artisan route:list`
+
+The database is seeded with 5 users, but you can use the following credentials to make requests
+
+```
+user: jsmith@example.com
+pass: qwerty
+```
+
+Here are some examples
+
+```
+# list products
+curl -vvv -L -XGET -u 'jsmith@example.com:qwerty' -H "Content-Type: application/json" 'http://localhost:8000/api/products'
+```
+
+```
+# show products
+curl -vvv -L -XGET -u 'jsmith@example.com:qwerty' -H "Content-Type: application/json" 'http://localhost:8000/api/products/1'
+```
+
+```
+# create a product without an image
+curl -vvv -L -XPOST -u 'jsmith@example.com:qwerty' -H "Content-Type: application/json" 'http://localhost:8000/api/products' -d '{"name":"Example Product","description":"This is created with curl","price":12.34}'
+```
+
+```
+# update a product without an image
+curl -vvv -L -XPOST -u 'jsmith@example.com:qwerty' -H "Content-Type: application/json" 'http://localhost:8000/api/products' -d '{"name":"Example Updated Product","description":"This is updated with curl","price":9.99}'
+```
+
+```
+# delete a product
+curl -vvv -L -XDELETE -u 'jsmith@example.com:qwerty' -H "Content-Type: application/json" 'http://localhost:8000/api/products/1'
+```
+
+### Unit Testing
+Tests for the `ProductsController` are in the `tests/Unit/API`.
+
+Use `php artisan test` to run the tests.
+
+Tests for `MyProductsController` were skipped due to time contraints and the fact that they would
+be basically the same as `ProductsController` tests.
+
+No tests exists for the frontend Vue code, but I am familiar with testing using `jest` with React.
+
+### Frontend
+
+The application can be accessed from [http://localhost:8000](http://localhost:8000)
+
+You will need to click the login button in the top right to take you to the page with all of
+the products.
+
+The Profile, My Products, and Products sections are all populated using API requests. Each of these
+sections use custom Vue components.
+
+None of the users are seeded with products, so the My Products section will be empty until you
+add products.
+
+### Adding products
+
+The create product form can be found at [/api/products/create](http://localhost:8000/api/products/create).
+
+I have included a sample image that you can use in the `public/images` folder. Uploaded images are in `storage/app/images`
