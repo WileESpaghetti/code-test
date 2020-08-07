@@ -6,6 +6,7 @@ use App\Http\Resources\Product as ProductResource;
 use App\Http\Resources\ProductCollection;
 use App\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -26,7 +27,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return view('create-product');
     }
 
     /**
@@ -41,10 +42,25 @@ class ProductController extends Controller
             'name' => 'required|max:255',
             'description' => 'required|max:255',
             'price' => 'required',
-            'image' => 'max:255',
         ]);
 
-        $product = Product::create($request->all());
+        $productData = $request->all();
+        if (empty($productData['image'])) {
+            $productData['image'] = '';
+        }
+
+        if ($request->hasFile('image')) {
+            if ($request->file('image')->isValid()) {
+                $fileName = $request->image->hashName();
+                $request->image->storeAs('/public', $fileName);
+                $url = Storage::url($fileName);
+                $productData['image'] = $url;
+            } else {
+                abort(500, 'Could not upload image :(');
+            }
+        }
+
+        $product = Product::create($productData);
 
         return response()->json(new ProductResource($product), 201);
     }
