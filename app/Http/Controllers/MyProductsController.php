@@ -53,6 +53,7 @@ class MyProductsController extends Controller
 
 
         $user->products()->saveMany($newProducts);
+        $user->load('products');
 
         return response()->json($user->products);
     }
