@@ -6,7 +6,8 @@
             <p class="card-text">{{description}}</p>
             <p><strong>Price:</strong> {{priceFilter(price)}}</p>
 
-            <button v-on:click.prevent="handleClick" class="btn btn-primary" type="submit">Purchase</button>
+            <button v-if="!canRemove" v-on:click.prevent="handleAddButton" class="btn btn-primary" type="submit">Purchase</button>
+            <button v-if="canRemove"  v-on:click.prevent="handleRemoveButton" class="btn btn-danger" type="submit">Remove</button>
         </div>
     </div>
 </template>
@@ -20,7 +21,8 @@
             'name',
             'description',
             'price',
-            'image'
+            'image',
+            'canRemove'
         ],
         mounted() {
             console.log('Component mounted.')
@@ -33,7 +35,7 @@
                     minimumFractionDigits: 2
                 }).format(price);
             },
-            handleClick(e) {
+            handleAddButton(e) {
                 var button = e.target;
                 var self = this;
 
@@ -49,23 +51,46 @@
                         });
                     });
             },
+            handleRemoveButton(e) {
+                var button = e.target;
+                var self = this;
+
+                button.disabled = true;
+                this.removeProduct()
+                .then(function() {
+                    button.disabled = false;
+                    self.$root.$emit('removeproduct', {
+                        removedProductId: self.id
+                    });
+
+                });
+
+            },
             addProduct() {
                 var self = this;
-                {
-                    var data = [{id: self.id}];
+                var data = [{id: self.id}];
 
-                    return fetch("http://localhost:8000/api/products/mine", {
-                        method: 'POST',
-                        body: JSON.stringify(data),
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        }
-                    }).then(function (response) {
-                        console.log(response);
-                        return response.json()
-                    });
-                }
+                return fetch("http://localhost:8000/api/products/mine", {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                }).then(function (response) {
+                    console.log(response);
+                    return response.json()
+                });
+            },
+            removeProduct() {
+                var self = this;
+                return fetch("http://localhost:8000/api/products/mine/" + self.id, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
             }
         }
     }

@@ -16,6 +16,7 @@
                             <div class="row justify-content-center">
                                 <div v-for="product in products" :key="product.id" class="col-lg-4 col-md-6 col-sm-12 mb-3">
                                     <product
+                                        v-bind:can-remove="true"
                                         v-bind:name="product.name"
                                         v-bind:description="product.description"
                                         v-bind:price="product.price"
@@ -33,6 +34,8 @@
 </template>
 
 <script>
+    var _ = require('lodash');
+
     export default {
         data() {
             return {
@@ -50,6 +53,9 @@
             console.log('Component mounted.')
             this.$root.$on('addproduct', function(data) {
                 self.handleAddProduct(data);
+            });
+            this.$root.$on('removeproduct', function(data) {
+                self.handleRemoveProduct(data);
             });
         },
         created: function() {
@@ -71,10 +77,27 @@
             },
             handleAddProduct(data) {
                 var self = this;
-                console.log(data);
                 this.isAlertVisible = true;
                 this.alert = {
                     message: 'Product added: ' + data.addedProduct.name,
+                    clazz: 'alert-success'
+                };
+                setTimeout(function() {
+                    self.isAlertVisible = false;
+                }, 2000);
+                this.isLoading = true;
+                this.getProducts()
+                    .then(function(data) {
+                        self.products = data;
+                        self.isLoading = false;
+                    });
+            },
+            handleRemoveProduct(data) {
+                console.log('remove %o', data);
+                var self = this;
+                this.isAlertVisible = true;
+                this.alert = {
+                    message: 'Product added: ' + _.find(self.products, {id: data.removedProductId}).name,
                     clazz: 'alert-success'
                 };
                 setTimeout(function() {

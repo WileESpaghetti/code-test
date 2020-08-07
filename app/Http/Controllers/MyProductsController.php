@@ -101,9 +101,7 @@ class MyProductsController extends Controller
     public function destroy($id)
     {
         $user = auth()->user();
-        $user->products()
-            ->where('product_id', '=', $id)
-            ->delete();
+        $user->products()->detach($id);
 
         return response()->json(null, 204);
     }
