@@ -18,4 +18,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::get('products/mine', 'MyProductsController@index')->middleware('auth.basic');
 Route::post('products/mine', 'MyProductsController@store')->middleware('auth.basic');
+Route::delete('products/mine/{id}', 'MyProductsController@destroy')->middleware('auth.basic');
 Route::resource('products', 'ProductController')->middleware('auth.basic');
