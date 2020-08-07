@@ -1,8 +1,12 @@
 <template>
-    <div class="container">
-        <div class="row justify-content-center">
+    <div class="container-fluid">
+        <div v-if="isAlertVisible" :class="'alert ' + alert.clazz" role="alert">
+            {{alert.message}}
+        </div>
+        <div class="container">
+            <div class="row justify-content-center">
                 <div class="card">
-                    <div class="card-header">Products</div>
+                    <div class="card-header">My Products</div>
 
                     <div class="card-body text-center">
                         <div v-if="isLoading" class="spinner-border" role="status">
@@ -22,6 +26,7 @@
                             </div>
                         </div>
                     </div>
+                </div>
             </div>
         </div>
     </div>
@@ -34,10 +39,18 @@
                 isLoading: true,
                 isAlertVisible: false,
                 products: [],
+                alert: {
+                    message: '',
+                    clazz: ''
+                }
             };
         },
         mounted() {
+            var self = this;
             console.log('Component mounted.')
+            this.$root.$on('addproduct', function(data) {
+                self.handleAddProduct(data);
+            });
         },
         created: function() {
             console.log('created');
@@ -51,18 +64,28 @@
         methods: {
             getProducts: function () {
                 console.log('products');
-                return fetch("http://localhost:8000/api/products")
+                return fetch("http://localhost:8000/api/products/mine")
                     .then(function (response) {
                         return response.json()
                     });
             },
             handleAddProduct(data) {
                 var self = this;
-                console.log('handle add product');
+                console.log(data);
                 this.isAlertVisible = true;
+                this.alert = {
+                    message: 'Product added: ' + data.addedProduct.name,
+                    clazz: 'alert-success'
+                };
                 setTimeout(function() {
                     self.isAlertVisible = false;
                 }, 2000);
+                this.isLoading = true;
+                this.getProducts()
+                    .then(function(data) {
+                        self.products = data;
+                        self.isLoading = false;
+                    });
             }
         }
     }

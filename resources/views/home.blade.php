@@ -18,6 +18,8 @@
                 </div>
             </div>
 
+            <user-product-list></user-product-list>
+
             <product-list></product-list>
         </div>
     </div>

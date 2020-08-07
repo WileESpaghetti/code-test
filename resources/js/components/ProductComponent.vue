@@ -45,7 +45,7 @@
                         button.disabled = false;
                         self.$root.$emit('addproduct', {
                             products: products,
-                            addedProductId: addedProduct
+                            addedProduct: addedProduct
                         });
                     });
             },
